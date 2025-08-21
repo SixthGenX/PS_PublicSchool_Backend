@@ -54,12 +54,17 @@ interface ApiCodes {
   COUNSELLOR_ALREADY_ADDED_TO_FAVORITE: ApiCode;
   COUNSELLOR_NOT_ADDED_TO_FAVORITE: ApiCode;
   COUNSELLOR_CANNOT_BE_ADDED_TO_FAVORITE: ApiCode;
+  EMAIL_ALREADY_REGISTERED: ApiCode;
+  INVALID_CREDENTIALS: ApiCode;
+  LOGIN_SUCCESS: ApiCode;
+  
+  REGISTER_SUCCESS: ApiCode;
 }
 
 export default class ApplicationError extends Error {
   constructor(
     public readonly apiCode: ApiCode,
-    message?: string,
+    message?: string
   ) {
     super(message || apiCode.message);
     this.name = "ValidationError";
@@ -354,5 +359,29 @@ export const ApiCodes: ApiCodes = {
     message: "Counsellor cannot be added to favorites.",
     apiCode: "COUNSELLOR_CANNOT_BE_ADDED_TO_FAVORITE",
     statusCode: 400,
+  },
+  EMAIL_ALREADY_REGISTERED: {
+    isError: true,
+    message: "Email already registered",
+    apiCode: "EMAIL_ALREADY_REGISTERED",
+    statusCode: 400,
+  },
+  INVALID_CREDENTIALS: {
+    isError: true,
+    message: "Invalid credentials",
+    apiCode: "INVALID_CREDENTIALS",
+    statusCode: 400,
+  },
+  LOGIN_SUCCESS: {
+    isError: false,
+    message: "Login successful",
+    apiCode: "LOGIN_SUCCESS",
+    statusCode: 200,
+  },
+  REGISTER_SUCCESS: {
+    isError: false,
+    message: "User registered successfully",
+    apiCode: "REGISTER_SUCCESS",
+    statusCode: 201,
   },
 };
