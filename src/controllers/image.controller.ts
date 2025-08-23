@@ -3,6 +3,7 @@ import ApplicationError, { ApiCodes } from "../models/apiModel/ApiCode";
 import { createImageDao, findImageByIdDao } from "../dao/imageDao";
 import { ImageType } from "../utils/enums";
 import { createResponse } from "../utils/apiUtils/apiUtils";
+import { uploadImageValidation } from "../validations/image.validator";
 
 export const uploadImage = async (
   req: Request,
@@ -10,16 +11,14 @@ export const uploadImage = async (
   next: NextFunction
 ) => {
   try {
+    await uploadImageValidation.validateAsync(req.body);
+
     if (!req.file) {
       throw new ApplicationError(ApiCodes.IMAGE_REQUIRED);
     }
 
     const { buffer, mimetype, size, originalname } = req.file;
     const { type } = req.body;
-
-    if (!type || !Object.values(ImageType).includes(type)) {
-      throw new ApplicationError(ApiCodes.INVALID_IMAGE);
-    }
 
     const newImage = await createImageDao(
       buffer,
