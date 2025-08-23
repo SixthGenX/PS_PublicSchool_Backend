@@ -57,8 +57,14 @@ interface ApiCodes {
   EMAIL_ALREADY_REGISTERED: ApiCode;
   INVALID_CREDENTIALS: ApiCode;
   LOGIN_SUCCESS: ApiCode;
-  
   REGISTER_SUCCESS: ApiCode;
+  
+  // Date Sheet related codes
+  DATE_SHEET_CREATED: ApiCode;
+  DATE_SHEET_UPDATED: ApiCode;
+  DATE_SHEET_NOT_FOUND: ApiCode;
+  INVALID_IMAGE: ApiCode;
+  IMAGE_REQUIRED: ApiCode;
 }
 
 export default class ApplicationError extends Error {
@@ -194,9 +200,9 @@ export const ApiCodes: ApiCodes = {
   },
   OTP_EXPIRY: {
     isError: true,
-    message: "OTP has expired",
+    message: "OTP has expired. Please request a new one.",
     apiCode: "OTP_EXPIRY",
-    statusCode: 401,
+    statusCode: 400,
   },
   EMPTY_REQUEST_PASSED: {
     isError: true,
@@ -383,5 +389,35 @@ export const ApiCodes: ApiCodes = {
     message: "User registered successfully",
     apiCode: "REGISTER_SUCCESS",
     statusCode: 201,
+  },
+  DATE_SHEET_CREATED: {
+    isError: false,
+    message: "Date sheet created successfully",
+    apiCode: "DATE_SHEET_CREATED",
+    statusCode: 201,
+  },
+  DATE_SHEET_UPDATED: {
+    isError: false,
+    message: "Date sheet updated successfully",
+    apiCode: "DATE_SHEET_UPDATED",
+    statusCode: 200,
+  },
+  DATE_SHEET_NOT_FOUND: {
+    isError: true,
+    message: "Date sheet not found",
+    apiCode: "DATE_SHEET_NOT_FOUND",
+    statusCode: 404,
+  },
+  INVALID_IMAGE: {
+    isError: true,
+    message: "Invalid image file. Only image files are allowed",
+    apiCode: "INVALID_IMAGE",
+    statusCode: 400,
+  },
+  IMAGE_REQUIRED: {
+    isError: true,
+    message: "Image is required",
+    apiCode: "IMAGE_REQUIRED",
+    statusCode: 400,
   },
 };

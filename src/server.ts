@@ -1,7 +1,7 @@
 require("dotenv").config();
 import express, { Request, Response, NextFunction } from "express";
 import connectDB from "./db/db";
-import indexRouter from "./routes/index";
+import indexRouter from "./routes/index.routes";
 import { requestLoggerMiddleware } from "./middlewares/reqResLogger";
 import ApplicationError, { ApiCodes } from "./models/apiModel/ApiCode";
 import { createResponse } from "./utils/apiUtils/apiUtils";

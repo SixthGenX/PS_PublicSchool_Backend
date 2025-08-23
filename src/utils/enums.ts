@@ -3,3 +3,15 @@ export enum UserRole {
   USER = "USER",
   MANAGER = "MANAGER",
 }
+
+export enum ImageType {
+  RESULT = "RESULT",
+  OTHER = "OTHER",
+}
+
+export enum ClassRangeForResult {
+  NURSERY_TO_LKG = "NURSERY_TO_LKG",
+  FIRST_TO_FIFTH_CLASS = "FIRST_TO_FIFTH_CLASS",
+  SIXTH_TO_TENTH_CLASS = "SIXTH_TO_TENTH_CLASS",
+  ELEVENTH_TO_TWELFTH_CLASS = "ELEVENTH_TO_TWELFTH_CLASS",
+}

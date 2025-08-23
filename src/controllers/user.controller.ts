@@ -4,7 +4,7 @@ import jwt, { SignOptions } from "jsonwebtoken";
 import {
   userRegisterValidation,
   userLoginValidation,
-} from "../validations/userValidation";
+} from "../validations/user.validator";
 import { UserRole } from "../utils/enums";
 import { createUserDao, findUserByEmailDao } from "../dao/userDao";
 import { createResponse } from "../utils/apiUtils/apiUtils";
