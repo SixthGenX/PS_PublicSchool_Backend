@@ -1,21 +1,20 @@
-import Image, { IImage } from '../models/Image';
-import { ImageType } from '../utils/enums';
+import Image, { IImage } from "../models/Image";
+import { ImageType } from "../utils/enums";
 
 export const createImageDao = async (
-  imageBuffer: Buffer,
+  buffer: Buffer,
+  type: ImageType,
   mimeType: string,
   size: number,
-  originalName: string,
-  type: ImageType = ImageType.RESULT
+  originalName: string
 ): Promise<IImage> => {
-  const image = await Image.create({
-    image: imageBuffer,
-    type,
-    mimeType,
-    size,
-    originalName,
+  return await Image.create({
+    image: buffer,
+    type: type,
+    mimeType: mimeType,
+    size: size,
+    originalName: originalName,
   });
-  return image;
 };
 
 export const findImageByIdDao = async (id: string): Promise<IImage | null> => {
