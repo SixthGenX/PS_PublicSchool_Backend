@@ -15,6 +15,7 @@ const DateSheetSchema = new Schema<IDateSheet>(
     classRange: {
       type: String,
       enum: Object.values(ClassRangeForResult),
+      unique: true,
       required: true,
     },
     image: {

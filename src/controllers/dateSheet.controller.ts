@@ -12,6 +12,7 @@ import ApplicationError, { ApiCodes } from "../models/apiModel/ApiCode";
 import { createImageDao, imageExistsDao } from "../dao/imageDao";
 import {
   createDateSheetDao,
+  dateSheetExistsDao,
   doesDateSheetExistByIdDao,
   findDateSheetByIdDao,
   findDateSheetsDao,
@@ -44,6 +45,14 @@ export const createDateSheet = async (
 
     const { classRange } = req.body;
 
+    const isDateSheetExistsForClass = await dateSheetExistsDao(classRange);
+    if (isDateSheetExistsForClass) {
+      throw new ApplicationError({
+        ...ApiCodes.RESULT_ALREADY_EXISTS,
+        message: "Date sheet for class already exists.",
+      });
+    }
+
     const imageExists: boolean = await imageExistsDao(req.body?.imageId);
 
     if (!imageExists) {
@@ -75,6 +84,14 @@ export const updateDateSheet = async (
     const { id } = req.params;
     const { classRange } = req.body;
     const updates: { classRange?: ClassRangeForResult; imageId?: string } = {};
+
+    const isDateSheetExistsForClass = await dateSheetExistsDao(classRange);
+    if (isDateSheetExistsForClass) {
+      throw new ApplicationError({
+        ...ApiCodes.RESULT_ALREADY_EXISTS,
+        message: "Date sheet for class already exists.",
+      });
+    }
 
     if (req.body?.imageId) {
       const imageExists: boolean = await imageExistsDao(req.body?.imageId);

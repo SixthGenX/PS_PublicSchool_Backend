@@ -73,3 +73,10 @@ export const findDateSheetsDao = async (
 
   return data;
 };
+
+export const dateSheetExistsDao = async (
+  classRange: ClassRangeForResult
+): Promise<boolean> => {
+  const existing = await DateSheet.findOne({ classRange }).exec();
+  return !!existing;
+};
