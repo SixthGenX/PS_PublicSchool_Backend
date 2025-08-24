@@ -17,7 +17,7 @@ export const isAdmin = (
   next: NextFunction
 ) => {
   try {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.token as string;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       throw new ApplicationError(ApiCodes.UNAUTHORIZED);
