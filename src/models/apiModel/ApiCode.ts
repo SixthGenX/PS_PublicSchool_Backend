@@ -67,6 +67,8 @@ interface ApiCodes {
   RESULT_ALREADY_EXISTS: ApiCode;
   RESULT_CREATED_SUCCESS: ApiCode;
   RESULT_CREATION_FAILED: ApiCode;
+  UNAUTHORIZED: ApiCode;
+  FORBIDDEN: ApiCode;
 }
 
 export default class ApplicationError extends Error {
@@ -445,5 +447,17 @@ export const ApiCodes: ApiCodes = {
     isError: true,
     message: "Failed to create result",
     apiCode: "RESULT_CREATION_FAILED",
+  },
+  UNAUTHORIZED: {
+    isError: true,
+    message: "You are not authorized. Please login first.",
+    apiCode: "UNAUTHORIZED",
+    statusCode: 401,
+  },
+  FORBIDDEN: {
+    isError: true,
+    message: "You do not have permission to perform this action.",
+    apiCode: "FORBIDDEN",
+    statusCode: 403,
   },
 };
