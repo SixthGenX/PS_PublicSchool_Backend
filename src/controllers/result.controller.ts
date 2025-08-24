@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { createStudentIfNotExistsDao } from "../dao/studentDao";
-import { createResultDao, resultExistsDao } from "../dao/resultDao";
+import { createResultDao, findResultsDao, resultExistsDao } from "../dao/resultDao";
 import { ClassEnum, ResultStatus } from "../utils/enums";
-import { studentRequestValidation } from "../validations/result.validator";
+import { resultQueryValidation, studentRequestValidation } from "../validations/result.validator";
 import ApplicationError, { ApiCodes } from "../models/apiModel/ApiCode";
 import { createResponse } from "../utils/apiUtils/apiUtils";
 
@@ -58,5 +58,34 @@ export const createResult = async (
   } catch (err: any) {
     console.error("Got error while creating result", err);
     next(err);
+  }
+};
+
+export const getResults = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // ✅ Validate query params
+    await resultQueryValidation.validateAsync(req.query);
+
+    const { class: className, rollNumber } = req.query;
+
+    const results = await findResultsDao({
+      class: className as string | undefined,
+      rollNumber: rollNumber ? Number(rollNumber) : undefined,
+    });
+
+    res
+      .status(ApiCodes.SUCCESS.statusCode)
+      .send(createResponse(results, ApiCodes.SUCCESS));
+  } catch (err: any) {
+    console.error("Error fetching results", err);
+    next(
+      err instanceof ApplicationError
+        ? err
+        : new ApplicationError(ApiCodes.INTERNAL_SERVER_ERROR)
+    );
   }
 };

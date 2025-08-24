@@ -78,3 +78,25 @@ export const resultExistsDao = async (
 
   return !!result;
 };
+
+export const findResultsDao = async (filters: {
+  class?: string;
+  rollNumber?: number;
+}) => {
+  const query: any = {};
+  if (filters.class) query.class = filters.class;
+
+  // 🔹 We'll filter rollNumber from Student inside populate match
+  const populateMatch: any = {};
+  if (filters.rollNumber) {
+    populateMatch.rollNumber = filters.rollNumber;
+  }
+
+  return await Result.find(query)
+    .populate({
+      path: "studentId",
+      select: "name rollNumber",
+      match: populateMatch,
+    })
+    .exec();
+};

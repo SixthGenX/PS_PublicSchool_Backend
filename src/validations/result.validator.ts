@@ -40,3 +40,17 @@ export const studentRequestValidation = Joi.object({
       "any.required": "Status is required",
     }),
 });
+
+export const resultQueryValidation = Joi.object({
+  class: Joi.string()
+    .valid(...Object.values(ClassEnum))
+    .optional()
+    .messages({
+      "any.only": `Class must be one of ${Object.values(ClassEnum).join(", ")}`,
+    }),
+
+  rollNumber: Joi.number().integer().min(1).optional().messages({
+    "number.base": "Roll Number must be a number",
+    "number.min": "Roll Number must be greater than 0",
+  }),
+});
