@@ -35,3 +35,9 @@ export enum ResultStatus {
   PASS = "PASS",
   FAIL = "FAIL",
 }
+
+export enum BookStatus {
+  AVAILABLE = "AVAILABLE",
+  ISSUED = "ISSUED",
+  LOST = "LOST",
+}
