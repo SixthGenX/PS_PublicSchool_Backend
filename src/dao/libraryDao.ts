@@ -1,0 +1,84 @@
+import { Types } from "mongoose";
+import Library, { ILibrary } from "../models/Library";
+import Student, { IStudent } from "../models/Student";
+import { BookStatus, ClassEnum } from "../utils/enums";
+import { createStudentIfNotExistsDao } from "./studentDao";
+
+/**
+ * Creates a library book entry if not already exists
+ * @param bookNumber Unique number of the book
+ * @param bookTitle Title of the book
+ * @param status Status of the book (default: AVAILABLE)
+ * @param studentId Optional studentId if the book is issued
+ * @returns ILibrary | null
+ */
+export const createLibraryBookIfNotExistsDao = async (
+  bookNumber: number,
+  bookTitle: string,
+  status: BookStatus = BookStatus.AVAILABLE,
+  studentId?: string
+): Promise<ILibrary | null> => {
+  const existing = await Library.findOne({ bookNumber }).exec();
+
+  if (existing) {
+    return null;
+  }
+
+  const book = new Library({
+    bookNumber,
+    bookTitle,
+    status,
+    studentId: studentId || null,
+  });
+
+  return await book.save();
+};
+
+export const addOrUpdateLibraryBookDao = async (
+  bookTitle: string,
+  bookNumber: number,
+  className: ClassEnum,
+  rollNumber: number,
+  issuedTo: string | null,
+  bookStatus: BookStatus
+): Promise<ILibrary> => {
+  // Step 1: Ensure student exists
+  let student: IStudent | null = null;
+
+  if (issuedTo) {
+    student = await Student.findById(issuedTo).exec();
+    if (!student) {
+      throw new Error("Invalid student ID provided");
+    }
+  } else {
+    // Auto-create student if rollNo given
+    student = await createStudentIfNotExistsDao(
+      bookTitle + "_holder", // fallback name
+      className,
+      rollNumber
+    );
+  }
+
+  // Step 2: Check if book exists (fix here 👇)
+  let existingBook = await Library.findOne({ bookNumber }).exec();
+
+  if (existingBook) {
+    // Update existing
+    existingBook.bookStatus = bookStatus;
+    if (student?._id) {
+      existingBook.issuedTo = new Types.ObjectId(student._id.toString());
+    }
+    return await existingBook.save();
+  }
+
+  // Step 3: Create new
+  const newBook = new Library({
+    bookTitle,
+    bookNumber,
+    class: className,
+    issuedTo: student?._id ? new Types.ObjectId(student._id.toString()) : null,
+    bookStatus,
+  });
+
+  return await newBook.save();
+};
