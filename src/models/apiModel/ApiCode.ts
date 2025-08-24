@@ -59,13 +59,14 @@ interface ApiCodes {
   INVALID_CREDENTIALS: ApiCode;
   LOGIN_SUCCESS: ApiCode;
   REGISTER_SUCCESS: ApiCode;
-  
-  // Date Sheet related codes
   DATE_SHEET_CREATED: ApiCode;
   DATE_SHEET_UPDATED: ApiCode;
   DATE_SHEET_NOT_FOUND: ApiCode;
   INVALID_IMAGE: ApiCode;
   IMAGE_REQUIRED: ApiCode;
+  RESULT_ALREADY_EXISTS: ApiCode;
+  RESULT_CREATED_SUCCESS: ApiCode;
+  RESULT_CREATION_FAILED: ApiCode;
 }
 
 export default class ApplicationError extends Error {
@@ -85,7 +86,7 @@ export const ApiCodes: ApiCodes = {
     apiCode: "NOT_FOUND",
     statusCode: 404,
   },
-   IMAGE_NOT_FOUND: {
+  IMAGE_NOT_FOUND: {
     isError: true,
     message: "Image not found",
     apiCode: "IMAGE_404",
@@ -426,5 +427,23 @@ export const ApiCodes: ApiCodes = {
     message: "Image is required",
     apiCode: "IMAGE_REQUIRED",
     statusCode: 400,
+  },
+  RESULT_ALREADY_EXISTS: {
+    statusCode: 400,
+    isError: true,
+    message: "Result already exists for this class and roll number",
+    apiCode: "RESULT_ALREADY_EXISTS",
+  },
+  RESULT_CREATED_SUCCESS: {
+    statusCode: 201,
+    isError: false,
+    message: "Result created successfully",
+    apiCode: "RESULT_CREATED_SUCCESS",
+  },
+  RESULT_CREATION_FAILED: {
+    statusCode: 500,
+    isError: true,
+    message: "Failed to create result",
+    apiCode: "RESULT_CREATION_FAILED",
   },
 };
