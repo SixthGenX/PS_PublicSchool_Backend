@@ -8,6 +8,11 @@ export const libraryBookValidation = Joi.object({
     "any.required": "Book title is required",
   }),
 
+  studentName: Joi.string().min(2).max(20).optional().messages({
+    "string.base": "Student name must be a string",
+    "string.empty": "Student name is required",
+  }),
+
   bookNumber: Joi.number().integer().min(1).required().messages({
     "number.base": "Book number must be a number",
     "any.required": "Book number is required",

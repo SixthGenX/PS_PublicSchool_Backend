@@ -20,6 +20,7 @@ export const addOrUpdateLibraryBook = async (
       bookNumber,
       class: className,
       rollNo,
+      studentName,
       issuedTo,
       bookStatus,
     } = req.body;
@@ -28,6 +29,7 @@ export const addOrUpdateLibraryBook = async (
       bookTitle,
       bookNumber,
       className,
+      studentName,
       rollNo,
       issuedTo || null,
       bookStatus

@@ -38,6 +38,7 @@ export const addOrUpdateLibraryBookDao = async (
   bookTitle: string,
   bookNumber: number,
   className: ClassEnum,
+  studentName: string,
   rollNumber: number,
   issuedTo: string | null,
   bookStatus: BookStatus
@@ -52,11 +53,13 @@ export const addOrUpdateLibraryBookDao = async (
     }
   } else {
     // Auto-create student if rollNo given
-    student = await createStudentIfNotExistsDao(
-      bookTitle + "_holder", // fallback name
-      className,
-      rollNumber
-    );
+    if (studentName && rollNumber) {
+      student = await createStudentIfNotExistsDao(
+        bookTitle + "_holder", // fallback name
+        className,
+        rollNumber
+      );
+    }
   }
 
   // Step 2: Check if book exists (fix here 👇)
