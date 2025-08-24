@@ -19,6 +19,7 @@ import {
 } from "../dao/dateSheetDao";
 import { IImage } from "../models/Image";
 import { IDateSheet } from "../models/DateSheet";
+import { ClassRangeForResultConfig } from "../utils/utils";
 
 // Extend the Request type to include query and params
 interface RequestWithQuery extends Request {
@@ -139,11 +140,17 @@ export const getDateSheets = async (
     // Get date sheets using DAO
     const dateSheets = await findDateSheetsDao(filter);
 
+    // Map each date sheet with classText
+    const mappedDateSheets = dateSheets.map((ds) => ({
+      ...ds.toObject(),
+      classText: ClassRangeForResultConfig[ds.classRange],
+    }));
+
     res.status(ApiCodes.SUCCESS.statusCode).json(
       createResponse(
         {
-          dateSheets,
-          count: dateSheets.length,
+          dateSheets: mappedDateSheets,
+          count: mappedDateSheets.length,
         },
         ApiCodes.SUCCESS
       )
@@ -167,9 +174,14 @@ export const getDateSheetById = async (
       throw new ApplicationError(ApiCodes.DATE_SHEET_NOT_FOUND);
     }
 
+    const mappedDateSheet = {
+      ...dateSheet.toObject(),
+      classText: ClassRangeForResultConfig[dateSheet.classRange],
+    };
+
     res
       .status(ApiCodes.SUCCESS.statusCode)
-      .json(createResponse(dateSheet, ApiCodes.SUCCESS));
+      .json(createResponse(mappedDateSheet, ApiCodes.SUCCESS));
   } catch (error) {
     next(error);
   }
