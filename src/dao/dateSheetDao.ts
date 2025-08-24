@@ -24,14 +24,20 @@ export const updateDateSheetDao = async (
   id: string,
   updates: {
     classRange?: ClassRangeForResult;
-    image?: Types.ObjectId;
+    imageId?: string;
   }
 ): Promise<IDateSheet | null> => {
+  const updateData: any = { ...updates };
+  if (updates.imageId) {
+    updateData.image = new Types.ObjectId(updates.imageId);
+  }
+
   const dateSheet = await DateSheet.findByIdAndUpdate(
     id,
-    { $set: updates },
+    { $set: updateData },
     { new: true }
   );
+
   return dateSheet;
 };
 

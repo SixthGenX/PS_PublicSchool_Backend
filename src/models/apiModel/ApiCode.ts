@@ -7,6 +7,7 @@ export interface ApiCode {
 
 interface ApiCodes {
   NOT_FOUND: ApiCode;
+  IMAGE_NOT_FOUND: ApiCode;
   SUCCESS: ApiCode;
   DUPLICATE_KEY_ERROR: ApiCode;
   INVALID_CAST_ERROR: ApiCode;
@@ -82,6 +83,12 @@ export const ApiCodes: ApiCodes = {
     isError: true,
     message: "Something not right, Please try again after sometime!!",
     apiCode: "NOT_FOUND",
+    statusCode: 404,
+  },
+   IMAGE_NOT_FOUND: {
+    isError: true,
+    message: "Image not found",
+    apiCode: "IMAGE_404",
     statusCode: 404,
   },
   SUCCESS: {

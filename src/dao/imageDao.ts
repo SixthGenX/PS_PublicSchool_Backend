@@ -20,3 +20,8 @@ export const createImageDao = async (
 export const findImageByIdDao = async (id: string): Promise<IImage | null> => {
   return await Image.findById(id).exec();
 };
+
+export const imageExistsDao = async (id: string): Promise<boolean> => {
+  const exists = await Image.exists({ _id: id }).exec();
+  return !!exists;
+};

@@ -9,7 +9,7 @@ import {
 import { ClassRangeForResult, ImageType } from "../utils/enums";
 import { createResponse } from "../utils/apiUtils/apiUtils";
 import ApplicationError, { ApiCodes } from "../models/apiModel/ApiCode";
-import { createImageDao } from "../dao/imageDao";
+import { createImageDao, imageExistsDao } from "../dao/imageDao";
 import {
   createDateSheetDao,
   doesDateSheetExistByIdDao,
@@ -42,38 +42,22 @@ export const createDateSheet = async (
     await createDateSheetSchema.validateAsync(req.body);
 
     const { classRange } = req.body;
-    const file = req.file;
 
-    if (!file) {
-      throw new ApplicationError(ApiCodes.IMAGE_REQUIRED);
+    const imageExists: boolean = await imageExistsDao(req.body?.imageId);
+
+    if (!imageExists) {
+      throw new ApplicationError(ApiCodes.IMAGE_NOT_FOUND);
     }
-
-    if (!file.mimetype.startsWith("image/")) {
-      throw new ApplicationError(ApiCodes.INVALID_IMAGE);
-    }
-
-    // Create image using DAO
-    if (!file.buffer) {
-      throw new ApplicationError(ApiCodes.INVALID_IMAGE);
-    }
-
-    const image: IImage = await createImageDao(
-      file.buffer,
-      file.mimetype,
-      file.size,
-      file.originalname,
-      ImageType.RESULT
-    );
 
     // Create date sheet using DAO
     const dateSheet = await createDateSheetDao(
       classRange as ClassRangeForResult,
-      new Types.ObjectId(image._id)
+      new Types.ObjectId(req.body?.imageId)
     );
 
     res
       .status(ApiCodes.DATE_SHEET_CREATED.statusCode)
-      .json(createResponse({ dateSheet }, ApiCodes.DATE_SHEET_CREATED));
+      .json(createResponse(dateSheet, ApiCodes.DATE_SHEET_CREATED));
   } catch (error) {
     next(error);
   }
@@ -89,35 +73,22 @@ export const updateDateSheet = async (
 
     const { id } = req.params;
     const { classRange } = req.body;
-    const file = req.file;
+    const updates: { classRange?: ClassRangeForResult; imageId?: string } = {};
+
+    if (req.body?.imageId) {
+      const imageExists: boolean = await imageExistsDao(req.body?.imageId);
+
+      if (!imageExists) {
+        throw new ApplicationError(ApiCodes.IMAGE_NOT_FOUND);
+      }
+
+      updates.imageId = req.body?.imageId;
+    }
 
     // Find existing date sheet using DAO
     const existingDateSheet = await findDateSheetByIdDao(id);
     if (!existingDateSheet) {
       throw new ApplicationError(ApiCodes.DATE_SHEET_NOT_FOUND);
-    }
-
-    const updates: { classRange?: ClassRangeForResult; image?: any } = {};
-
-    // Update image if new file is provided
-    if (file) {
-      if (!file.mimetype.startsWith("image/")) {
-        throw new ApplicationError(ApiCodes.INVALID_IMAGE);
-      }
-
-      // Create new image using DAO
-      if (!file.buffer) {
-        throw new ApplicationError(ApiCodes.INVALID_IMAGE);
-      }
-
-      const image = await createImageDao(
-        file.buffer,
-        file.mimetype,
-        file.size,
-        file.originalname,
-        ImageType.RESULT
-      );
-      updates.image = image._id;
     }
 
     // Update class range if provided
@@ -145,7 +116,7 @@ export const updateDateSheet = async (
 
     res
       .status(ApiCodes.DATE_SHEET_UPDATED.statusCode)
-      .json(createResponse({ dateSheet: result }, ApiCodes.DATE_SHEET_UPDATED));
+      .json(createResponse(result, ApiCodes.DATE_SHEET_UPDATED));
   } catch (error) {
     next(error);
   }
