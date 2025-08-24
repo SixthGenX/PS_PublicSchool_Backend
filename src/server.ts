@@ -6,11 +6,21 @@ import { requestLoggerMiddleware } from "./middlewares/reqResLogger";
 import ApplicationError, { ApiCodes } from "./models/apiModel/ApiCode";
 import { createResponse } from "./utils/apiUtils/apiUtils";
 import Joi from "joi";
+import cors from "cors";
 
 connectDB();
 
 // Create an Express application
 const app = express();
+
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:4000"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "token"],
+  })
+);
 
 // Middleware
 app.use(express.json());
@@ -35,7 +45,7 @@ const errorHandler = (
   err: Error,
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   if (!err) {
     return next();
@@ -54,8 +64,8 @@ const errorHandler = (
         {
           ...ApiCodes.VALIDATION_ERROR,
           message: err.details[0].message,
-        },
-      ),
+        }
+      )
     );
   } else if (err instanceof SyntaxError) {
     return res
