@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { addOrUpdateLibraryBookDao } from "../dao/libraryDao";
+import {
+  addOrUpdateLibraryBookDao,
+  searchLibraryBooksDao,
+} from "../dao/libraryDao";
 import { libraryBookValidation } from "../validations/library.validator";
-import { ApiCodes } from "../models/apiModel/ApiCode";
+import ApplicationError, { ApiCodes } from "../models/apiModel/ApiCode";
 import { createResponse } from "../utils/apiUtils/apiUtils";
 export const addOrUpdateLibraryBook = async (
   req: Request,
@@ -38,5 +41,36 @@ export const addOrUpdateLibraryBook = async (
   } catch (err: any) {
     console.error("Error processing library request", err);
     next(err);
+  }
+};
+
+export const searchLibraryBooks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { search } = req.query;
+
+    if (!search || typeof search !== "string") {
+      throw new ApplicationError({
+        ...ApiCodes.BAD_REQUEST,
+        message: "Search query is required and must be a string",
+      });
+    }
+
+    const results = await searchLibraryBooksDao(search);
+
+    res.status(ApiCodes.SUCCESS.statusCode).json(
+      createResponse(results, {
+        ...ApiCodes.SUCCESS,
+        message: results.length
+          ? "Books found successfully"
+          : "No books matched your search",
+      })
+    );
+  } catch (error: any) {
+    console.error("Error searching books:", error);
+    next(error);
   }
 };

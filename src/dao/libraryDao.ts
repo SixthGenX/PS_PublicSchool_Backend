@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import Library, { ILibrary } from "../models/Library";
 import Student, { IStudent } from "../models/Student";
 import { BookStatus, ClassEnum } from "../utils/enums";
@@ -81,4 +81,31 @@ export const addOrUpdateLibraryBookDao = async (
   });
 
   return await newBook.save();
+};
+
+export const searchLibraryBooksDao = async (
+  search: string
+): Promise<ILibrary[]> => {
+  const conditions: any[] = [];
+
+  // 1. If it's a number → check numeric fields
+  if (!isNaN(Number(search))) {
+    conditions.push({ bookNumber: Number(search) });
+    conditions.push({ rollNo: Number(search) });
+  }
+
+  // 2. If it's a valid ObjectId → check studentId or _id
+  if (mongoose.Types.ObjectId.isValid(search)) {
+    conditions.push({ issuedTo: new mongoose.Types.ObjectId(search) });
+    conditions.push({ _id: new mongoose.Types.ObjectId(search) });
+  }
+
+  // 3. Always allow regex for string fields
+  conditions.push({ bookTitle: { $regex: search, $options: "i" } });
+  conditions.push({ bookStatus: { $regex: search, $options: "i" } });
+
+  // Build OR query
+  const query = conditions.length > 0 ? { $or: conditions } : {};
+
+  return await Library.find(query).exec();
 };
