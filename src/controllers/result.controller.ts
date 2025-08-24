@@ -1,8 +1,17 @@
 import { Request, Response, NextFunction } from "express";
 import { createStudentIfNotExistsDao } from "../dao/studentDao";
-import { createResultDao, findResultsDao, resultExistsDao } from "../dao/resultDao";
+import {
+  createResultDao,
+  deleteAllResultsDao,
+  deleteResultByIdDao,
+  findResultsDao,
+  resultExistsDao,
+} from "../dao/resultDao";
 import { ClassEnum, ResultStatus } from "../utils/enums";
-import { resultQueryValidation, studentRequestValidation } from "../validations/result.validator";
+import {
+  resultQueryValidation,
+  studentRequestValidation,
+} from "../validations/result.validator";
 import ApplicationError, { ApiCodes } from "../models/apiModel/ApiCode";
 import { createResponse } from "../utils/apiUtils/apiUtils";
 
@@ -87,5 +96,52 @@ export const getResults = async (
         ? err
         : new ApplicationError(ApiCodes.INTERNAL_SERVER_ERROR)
     );
+  }
+};
+
+export const deleteResultById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const deleted = await deleteResultByIdDao(id);
+
+    if (!deleted) {
+      return res
+        .status(ApiCodes.NOT_FOUND.statusCode)
+        .send(createResponse(null, ApiCodes.NOT_FOUND));
+    }
+
+    res.status(ApiCodes.SUCCESS.statusCode).send(
+      createResponse(deleted, {
+        ...ApiCodes.SUCCESS,
+        message: "Record deleted successfully.",
+      })
+    );
+  } catch (err) {
+    console.error("Error deleting result by ID:", err);
+    next(err);
+  }
+};
+
+export const deleteAllResults = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const deleted = await deleteAllResultsDao();
+
+    res.status(ApiCodes.SUCCESS.statusCode).send(
+      createResponse(deleted, {
+        ...ApiCodes.SUCCESS,
+        message: "Records deleted successfully.",
+      })
+    );
+  } catch (err) {
+    console.error("Error deleting all results:", err);
+    next(err);
   }
 };

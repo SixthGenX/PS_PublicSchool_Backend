@@ -100,3 +100,11 @@ export const findResultsDao = async (filters: {
     })
     .exec();
 };
+
+export const deleteResultByIdDao = async (id: string) => {
+  return await Result.findByIdAndDelete(id).exec();
+};
+
+export const deleteAllResultsDao = async () => {
+  return await Result.deleteMany({}).exec();
+};
