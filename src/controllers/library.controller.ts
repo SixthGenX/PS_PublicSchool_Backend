@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import {
   addOrUpdateLibraryBookDao,
+  getTotalBooksDao,
   searchLibraryBooksDao,
 } from "../dao/libraryDao";
 import { libraryBookValidation } from "../validations/library.validator";
@@ -72,5 +73,29 @@ export const searchLibraryBooks = async (
   } catch (error: any) {
     console.error("Error searching books:", error);
     next(error);
+  }
+};
+
+export const getTotalBooks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const assignedOnlyFlag = req.query.assignedOnly === "true"; // optional query param
+    const books = await getTotalBooksDao(assignedOnlyFlag);
+
+    res.status(ApiCodes.SUCCESS.statusCode).json(
+      createResponse(
+        {
+          totalBooks: books.length,
+          books,
+        },
+        ApiCodes.SUCCESS
+      )
+    );
+  } catch (err: any) {
+    console.error("Error fetching total books:", err);
+    next(err);
   }
 };

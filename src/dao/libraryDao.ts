@@ -109,3 +109,13 @@ export const searchLibraryBooksDao = async (
 
   return await Library.find(query).exec();
 };
+
+export const getTotalBooksDao = async (
+  assignedOnly?: boolean
+): Promise<ILibrary[]> => {
+  const query: any = {};
+  if (assignedOnly) {
+    query.issuedTo = { $ne: null };
+  }
+  return await Library.find(query).exec();
+};
