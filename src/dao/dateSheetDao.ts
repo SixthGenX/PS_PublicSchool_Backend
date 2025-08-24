@@ -66,8 +66,10 @@ export const findDateSheetsDao = async (
     query.classRange = filter.classRange;
   }
 
-  return await DateSheet.find(query)
+  const data = await DateSheet.find(query)
     .populate("image", "-image") // Exclude the actual image buffer
     .sort({ createdAt: -1 })
     .exec();
+
+  return data;
 };

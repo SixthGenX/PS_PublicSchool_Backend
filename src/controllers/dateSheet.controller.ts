@@ -169,7 +169,7 @@ export const getDateSheetById = async (
 
     res
       .status(ApiCodes.SUCCESS.statusCode)
-      .json(createResponse({ dateSheet }, ApiCodes.SUCCESS));
+      .json(createResponse(dateSheet, ApiCodes.SUCCESS));
   } catch (error) {
     next(error);
   }
