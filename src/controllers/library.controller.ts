@@ -13,7 +13,7 @@ export const addOrUpdateLibraryBook = async (
   next: NextFunction
 ) => {
   try {
-    libraryBookValidation.validateAsync(req.body);
+    await libraryBookValidation.validateAsync(req.body);
 
     const {
       bookTitle,
