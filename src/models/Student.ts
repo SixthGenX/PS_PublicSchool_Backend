@@ -25,7 +25,7 @@ const StudentSchema = new Schema<IStudent>(
     rollNumber: {
       type: Number,
       required: true,
-      unique: true,
+      // unique: true,
     },
   },
   {
