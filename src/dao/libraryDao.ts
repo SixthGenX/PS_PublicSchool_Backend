@@ -125,3 +125,13 @@ export const getTotalBooksDao = async (
     .populate("issuedTo", "name class rollNumber")
     .exec();
 };
+
+
+
+export const deleteLibraryBookDao = async (id: string): Promise<ILibrary | null> => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error("Invalid book ID format");
+  }
+
+  return await Library.findByIdAndDelete(id).exec();
+};

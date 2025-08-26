@@ -101,3 +101,44 @@ export const getTotalBooks = async (
     next(err);
   }
 };
+
+
+
+
+import { deleteLibraryBookDao } from "../dao/libraryDao";
+
+export const deleteLibraryBook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      throw new ApplicationError({
+        ...ApiCodes.BAD_REQUEST,
+        message: "Book ID is required",
+      });
+    }
+
+    const deletedBook = await deleteLibraryBookDao(id);
+
+    if (!deletedBook) {
+      throw new ApplicationError({
+        ...ApiCodes.NOT_FOUND,
+        message: "Book not found or already deleted",
+      });
+    }
+
+    res.status(ApiCodes.SUCCESS.statusCode).json(
+      createResponse(deletedBook, {
+        ...ApiCodes.SUCCESS,
+        message: "Book deleted successfully",
+      })
+    );
+  } catch (err: any) {
+    console.error("Error deleting library book:", err);
+    next(err);
+  }
+};

@@ -15,4 +15,12 @@ router.get("/search", searchLibraryBooks);
 
 router.get("/total", getTotalBooks);
 
+import { deleteLibraryBook } from "../controllers/library.controller";
+
+// ...
+
+router.delete("/:id", isAdmin, deleteLibraryBook);
+
+
+
 export default router;
