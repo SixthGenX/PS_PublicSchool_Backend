@@ -120,5 +120,8 @@ export const getTotalBooksDao = async (
   if (assignedOnly) {
     query.issuedTo = { $ne: null };
   }
-  return await Library.find(query).exec();
+
+  return await Library.find(query)
+    .populate("issuedTo", "name class rollNumber")
+    .exec();
 };
