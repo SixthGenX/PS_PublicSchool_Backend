@@ -55,7 +55,7 @@ export const addOrUpdateLibraryBookDao = async (
     // Auto-create student if rollNo given
     if (studentName && rollNumber) {
       student = await createStudentIfNotExistsDao(
-        bookTitle + "_holder", // fallback name
+        studentName || (bookTitle + "_holder"), // fallback name
         className,
         rollNumber
       );
