@@ -5,6 +5,7 @@ import {
   updateDateSheet,
   getDateSheets,
   getDateSheetById,
+  upsertDateSheet,
 } from "../controllers/dateSheet.controller";
 import { ApiCodes } from "../models/apiModel/ApiCode";
 import { isAdmin } from "../middlewares/admin.middleware";
@@ -58,12 +59,21 @@ const handleMulterError = (
 };
 
 // Create a new date sheet
+
 router.post(
   "/",
   isAdmin,
   upload.single("image"),
   handleMulterError,
   createDateSheet
+);
+
+router.post(
+  "/upsert",
+  isAdmin,
+  upload.single("image"),
+  handleMulterError,
+  upsertDateSheet
 );
 
 // Update a date sheet

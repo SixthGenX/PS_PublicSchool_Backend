@@ -17,6 +17,7 @@ import {
   findDateSheetByIdDao,
   findDateSheetsDao,
   updateDateSheetDao,
+  upsertDateSheetDao,
 } from "../dao/dateSheetDao";
 import { IImage } from "../models/Image";
 import { IDateSheet } from "../models/DateSheet";
@@ -69,6 +70,50 @@ export const createDateSheet = async (
       .status(ApiCodes.DATE_SHEET_CREATED.statusCode)
       .json(createResponse(dateSheet, ApiCodes.DATE_SHEET_CREATED));
   } catch (error) {
+    next(error);
+  }
+};
+
+export const upsertDateSheet = async (
+  req: MulterRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await createDateSheetSchema.validateAsync(req.body);
+
+    const { classRange, imageId } = req.body;
+
+    // check if image exists
+    const imageExists: boolean = await imageExistsDao(imageId);
+    if (!imageExists) {
+      throw new ApplicationError(ApiCodes.IMAGE_NOT_FOUND);
+    }
+
+    // upsert date sheet
+    const dateSheet = await upsertDateSheetDao(
+      classRange as ClassRangeForResult,
+      new Types.ObjectId(imageId)
+    );
+
+    // if the record was updated vs created
+    const wasCreated =
+      dateSheet?.createdAt?.getTime() === dateSheet?.updatedAt?.getTime();
+
+    return res
+      .status(
+        wasCreated
+          ? ApiCodes.DATE_SHEET_CREATED.statusCode
+          : ApiCodes.DATE_SHEET_UPDATED.statusCode
+      )
+      .json(
+        createResponse(
+          dateSheet,
+          wasCreated ? ApiCodes.DATE_SHEET_CREATED : ApiCodes.DATE_SHEET_UPDATED
+        )
+      );
+  } catch (error) {
+    console.error("error in upsertDateSheet: ", error);
     next(error);
   }
 };

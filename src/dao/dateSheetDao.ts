@@ -41,6 +41,19 @@ export const updateDateSheetDao = async (
   return dateSheet;
 };
 
+export const upsertDateSheetDao = async (
+  classRange: ClassRangeForResult,
+  imageId: Types.ObjectId
+): Promise<IDateSheet | null> => {
+  const dateSheet = await DateSheet.findOneAndUpdate(
+    { classRange }, // match condition
+    { $set: { image: imageId } }, // update fields
+    { new: true, upsert: true } // return updated doc, create if not exists
+  ).exec();
+
+  return dateSheet;
+};
+
 export const doesDateSheetExistByIdDao = async (
   id: string
 ): Promise<boolean> => {
