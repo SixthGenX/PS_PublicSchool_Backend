@@ -18,7 +18,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "http://localhost:4000",
-      "https://ps-public-school.vercel.app/",
+      "https://ps-public-school.vercel.app",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
